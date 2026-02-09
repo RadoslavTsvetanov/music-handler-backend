@@ -46,9 +46,8 @@ app.getAll({
 
     },
     args: { id: "" }
-});
-
-app.post({
+})
+.post({
     path: "",
     handeler: async args => {
         const { url, title, artist } = args.body;
