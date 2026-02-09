@@ -31,9 +31,8 @@ app.getAll({
     args: {
         type: "files" | "links",
     }
-});
-
-app.post({
+})
+.post({
     path: "/music/:id",
     handeler: args => {
 
