@@ -2,7 +2,8 @@
   "name": "backend",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@blazyts/better-standard-library": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5"
