@@ -5,5 +5,6 @@ export const songSchema = z.object({
     name: z.string().nonempty(),
     author: z.string().nonempty(),
     tags: z.array(tagSchema),
+    linkToBucket: z.string().nonempty(),
     audioHash: z.string()
 })
