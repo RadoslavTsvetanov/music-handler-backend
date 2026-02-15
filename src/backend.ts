@@ -8,8 +8,9 @@ import { OneOf } from "@blazyts/better-standard-library/src/data_structures/func
 import { JsonRepo } from "./db/repository/variations/json";
 import z from "zod/v4";
 import { songSchema, tagSchema } from "./db/schema";
-import {mergeObjects, Without} from "@blazyts/zod-utils"
+import { mergeObjects, Without } from "@blazyts/zod-utils"
 import { uploadToBucket } from "./utils/uploadToBucket";
+import { RequestObjectHelper } from "@blazyts/backend-lib/src/core/utils/RequestObjectHelper";
 const execAsync = promisify(exec);
 
 // const MusicOrigin = OneOf([Spotify, Device, TikTok, Youtube])
@@ -20,42 +21,55 @@ const app = new Blazy();
 
 const repo = new JsonRepo()
 
-app
-.getAll({
-    handler: async () => await (new JsonRepo()).getAll()
-})
-.post({
-    path: "/fromFile",
-    handeler: async args => {
+const a = app
+    .post({
+        path: "/fromFile/",
+        handeler: async args => {
 
 
-        // "explicit mapping to avoid parameter polution attack "
-        const music = repo.createSong({
-            "author": args.author,
-            "linkToBucket": await uploadToBucket(args.file),
-            "name": args.name,
-            tags: args.tags
-        }) 
+            // "explicit mapping to avoid parameter polution attack "
+            const music = repo.createSong({
+                "author": args.author,
+                "linkToBucket": await uploadToBucket(args.file),
+                "name": args.name,
+                tags: args.tags
+            })
 
-        if (!music) {
-            throw new Error("Music not found");
-        }
+            if (!music) {
+                throw new Error("Music not found");
+            }
 
-        return music;
+            return music;
 
+        },
+        args: mergeObjects(Without(songSchema, ["audioHash", "linkToBucket"]), z.object({ file: z.file() }))
+    })
+    .post({
+        path: "/fromLink/",
+        handeler: async args => {
+            console.log("l", args.body)
+            return await repo.createSong({
+
+                "author": args.body.author,
+                "linkToBucket": args.body.linkToBucket,
+                "name": args.body.name,
+                tags: args.body.tags
+            })
+
+
+        },
+        args: Without(songSchema, ["audioHash"])
+    })
+
+
+console.log(a.route(new RequestObjectHelper({
+    path: "/fromLink",
+    body: {
+        author: "ji",
+        linkToBucket: "l",
+        name: "os",
+        tags: ["o"],
+        verb: "POST"
     },
-    args: mergeObjects(Without(songSchema, ["audioHash", "linkToBucket"]), z.object({file: z.file()}))
-})
-.post({
-    path: "/fromLink", 
-    handeler: args => {
-        const music = repo.createSong({
-
-            "author": args.author,
-            "linkToBucket": args.linkToBucket,
-            "name": args.name,
-            tags: args.tags
-        })
-    },
-    args: Without(songSchema, ["audioHash"])
-})
+    headers: {},
+})))

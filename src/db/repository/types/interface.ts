@@ -4,13 +4,13 @@ import type { OptionalPromise, TypeSafeOmit } from "@blazyts/better-standard-lib
 import type { Song } from "../../types";
 
 type SongQuery = {
-    name: {is: string} | {contains: string}
-    tags: {hasTagOfType?: string, valueOfTagIs?: string}
+    name: { is: string } | { contains: string }
+    tags: { hasTagOfType?: string, valueOfTagIs?: string }
     author: string
 }
 
 export interface IRepo {
-    createSong(song:  TypeSafeOmit<z.infer<typeof songSchema>, "audioHash">): Promise<void>
+    createSong(song: TypeSafeOmit<z.infer<typeof songSchema>, "audioHash">): Promise<Song>
     get(query: SongQuery): OptionalPromise<Song[]>
     getUsingAi(prompt: string): OptionalPromise<Song[]>
     getAll(): OptionalPromise<Song[]>

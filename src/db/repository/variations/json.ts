@@ -1,10 +1,9 @@
-import { type TypeSafeOmit, type OptionalPromise, TypeMarker } from "@blazyts/better-standard-library";
+import { type TypeSafeOmit, type OptionalPromise, TypeMarker  } from "@blazyts/better-standard-library";
 import type { output } from "zod";
 import { schema, songSchema } from "../../schema";
 import type { Song } from "../../types";
 import type { IRepo } from "../types/interface";
 import { JsonOrm, JsonOrmFactory } from "@blazyts/json-orm"
-import { OneOf } from "@blazyts/better-standard-library/src/data_structures/functional-patterns/one-of";
 
 
 class Is extends TypeMarker<"Is"> {
@@ -19,7 +18,7 @@ class Contains extends TypeMarker<"Contains"> {
     }
 }
 
-class NameQuery extends OneOf([Is, Contains])<unknown> { }
+// class NameQuery extends OneOf([Is, Contains])<unknown> { }
 
 
 function handleQuery(nameQuery: NameQuery) {
@@ -28,6 +27,7 @@ function handleQuery(nameQuery: NameQuery) {
     })
 }
 
+
 export class JsonRepo implements IRepo {
     private readonly client = JsonOrmFactory.normal(schema)
 
@@ -35,12 +35,14 @@ export class JsonRepo implements IRepo {
 
     }
 
-    async createSong(song: TypeSafeOmit<output<typeof songSchema>, "audioHash">): Promise<void> {
+    async createSong(song: TypeSafeOmit<output<typeof songSchema>, "audioHash">): Promise<Song> {
         const audioHash = this.generateAudioHash();
-        await this.client.transact(v => v.songs.push({
+        const newSong = {
             ...song,
             audioHash
-        }))
+        };
+        await this.client.transact(v => v.songs.push(newSong));
+        return newSong;
     }
 
     async get(query: {
@@ -99,3 +101,10 @@ export class JsonRepo implements IRepo {
 
 
 }
+
+new JsonRepo().createSong({
+    author: "drok",
+    linkToBucket: "",
+    name: "dd",
+    tags: []
+})

@@ -1,0 +1,27 @@
+{
+    "songs": [
+        {
+            "name": "dd",
+            "author": "drok",
+            "tags": [],
+            "linkToBucket": "oooo",
+            "audioHash": "hash_1771185483264_910oa2"
+        },
+        {
+            "name": "dd",
+            "author": "drok",
+            "tags": [],
+            "linkToBucket": "kkk",
+            "audioHash": "hash_1771193409710_b35iju"
+        },
+        {
+            "author": "ji",
+            "linkToBucket": "l",
+            "name": "os",
+            "tags": [
+                "o"
+            ],
+            "audioHash": "hash_1771193831744_q5vdwd"
+        }
+    ]
+}
